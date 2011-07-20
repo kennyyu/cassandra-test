@@ -5,11 +5,15 @@ of the variables in this file.
 """
 
 import pycassa
+from create_grades_schema import GRADES_KEYSPACE as GRADES_KEYSPACE
+from create_grades_schema import QUIZ_GRADES_COLUMN_FAMILY as QUIZ_GRADES_COLUMN_FAMILY
+from create_grades_schema import STUDENT_GRADES_COLUMN_FAMILY as STUDENT_GRADES_COLUMN_FAMILY
+from create_grades_schema import QUIZ_QUESTIONS_COLUMN_FAMILY as QUIZ_QUESTIONS_COLUMN_FAMILY
 
-GRADES_KEYSPACE = 'Test_Grades'
-QUIZ_GRADES_COLUMN_FAMILY = 'Quiz_Grades'
-STUDENT_GRADES_COLUMN_FAMILY = 'Student_Grades'
-QUIZ_QUESTIONS_COLUMN_FAMILY = 'Quiz_Questions'
+#GRADES_KEYSPACE = 'Test_Grades'
+#QUIZ_GRADES_COLUMN_FAMILY = 'Quiz_Grades'
+#STUDENT_GRADES_COLUMN_FAMILY = 'Student_Grades'
+#QUIZ_QUESTIONS_COLUMN_FAMILY = 'Quiz_Questions'
 
 # open a pool of connections to the cluster
 pool = pycassa.ConnectionPool(keyspace=GRADES_KEYSPACE, 
