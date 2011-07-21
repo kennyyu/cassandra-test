@@ -115,14 +115,16 @@ class Quiz:
         """
         Returns number of students with grade >= score on this quiz
         """
-        try:
-            return quiz_grades_cf.get_count(key=self.name,
-                                            column_start=score,
-                                            column_finish=MAX_SCORE,
-                                            read_consistency_level=ConsistencyLevel.ONE)
-        # pycassa throws a NotFoundException if the key is not in the db
-        except NotFoundException:
-            return None
+        #return quiz_grades_cf.get_count(key=self.name,
+        #                                column_start=score,
+        #                                column_finish=MAX_SCORE,
+        #                                read_consistency_level=ConsistencyLevel.ONE)
+        # this does not count the number of subcolumns, only super columns
+        students = self.get_students_with_grade_geq_than(score)
+        if students:
+            return len(students)
+        else:
+            return 0
 
     def get_num_failed(self):
         data = quiz_questions_cf.get(key=self.name, columns=['num_failed'],

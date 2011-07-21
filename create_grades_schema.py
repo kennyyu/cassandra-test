@@ -17,7 +17,6 @@ REPLICATION_FACTOR = 1
 sys = SystemManager('127.0.0.1:9160')
 
 print 'Cluster Name: ' + sys.describe_cluster_name()
-print ''
 print 'Keyspaces in cluster before add: ' + str(sys.list_keyspaces())
 
 # create the keyspace if it does not already exist
@@ -28,7 +27,6 @@ if not GRADES_KEYSPACE in sys.list_keyspaces():
                         strategy_options={'replication_factor' : str(REPLICATION_FACTOR)})
 
 # print information about cluster and keyspace
-print ''
 print 'Keyspaces in cluster after add: ' + str(sys.list_keyspaces())
 print ''
 print 'Ring description of keyspace: ' + str(sys.describe_ring(GRADES_KEYSPACE))

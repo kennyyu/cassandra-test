@@ -48,5 +48,5 @@ for q in quizzes:
     print "\tGrades: " + str(q.get_grades())
     print "\tNum failed: " + str(q.get_num_failed())
     print "\tQuestion frequency: " + str(q.get_question_frequency())
-    print "\tNum students with grade > 65: " + str(q.get_num_students_with_grade_geq_than(65))
+    print "\tNum students with grade >= 65: " + str(q.get_num_students_with_grade_geq_than(65))
     print "\t\tstudents: " + str(q.get_students_with_grade_geq_than(65))
