@@ -39,30 +39,30 @@ class Student:
         """
         quiz_grades_cf.insert(key=quiz.name,
                               columns={quiz_score : {self.name : str(questions_wrong)}},
-                              write_consistency_level=ConsistencyLevel.QUORUM)
+                              write_consistency_level=ConsistencyLevel.ANY)
         student_grades_cf.insert(key=self.name,
                                  columns={quiz.name : {'grade' : quiz_score,
                                                        'questions' : str(questions_wrong)}},
-                                 write_consistency_level=ConsistencyLevel.QUORUM)
+                                 write_consistency_level=ConsistencyLevel.ANY)
         # probably better to use a batch_insert
         for question in questions_wrong:
             quiz_questions_cf.add(key=quiz.name, column=question, value=1,
-                                  write_consistency_level=ConsistencyLevel.QUORUM)
+                                  write_consistency_level=ConsistencyLevel.ANY)
 
         if quiz_score < PASSING_SCORE:
             quiz_questions_cf.add(key=quiz.name, column='num_failed', value=1,
-                                  write_consistency_level=ConsistencyLevel.QUORUM)
+                                  write_consistency_level=ConsistencyLevel.ANY)
             
     def get_grade(self, quiz):
         data = student_grades_cf.get(self.name, super_column=quiz.name, columns=['grade'],
-                                     read_consistency_level=ConsistencyLevel.QUORUM)
+                                     read_consistency_level=ConsistencyLevel.ANY)
         return data['grade']
 
     def get_all_grades(self):
         """
         Returns a dict mapping quiz names -> grade
         """
-        data = student_grades_cf.get(self.name, read_consistency_level=ConsistencyLevel.QUORUM)
+        data = student_grades_cf.get(self.name, read_consistency_level=ConsistencyLevel.ONE)
         grades = {}
         for quiz in data:
             del data[quiz]['questions'] # superfluous information
@@ -72,7 +72,7 @@ class Student:
     def get_questions_wrong(self, quiz):
         # eval converts the string back to a list
         data = student_grades_cf.get(self.name, super_column=quiz.name, columns=['questions'],
-                                     read_consistency_level=ConsistencyLevel.QUORUM)
+                                     read_consistency_level=ConsistencyLevel.ONE)
         return eval(data['questions'])
 
 class Quiz:
@@ -83,7 +83,7 @@ class Quiz:
         """
         Returns a dict mapping grade -> students who received those grades
         """
-        data = quiz_grades_cf.get(key=self.name, read_consistency_level=ConsistencyLevel.QUORUM)
+        data = quiz_grades_cf.get(key=self.name, read_consistency_level=ConsistencyLevel.ONE)
         grades = {}
         for grade in data:
             for student in data[grade]:
@@ -100,7 +100,7 @@ class Quiz:
         data = quiz_grades_cf.get(key=self.name, 
                                   column_start=score, 
                                   column_finish=MAX_SCORE,
-                                  read_consistency_level=ConsistencyLevel.QUORUM)
+                                  read_consistency_level=ConsistencyLevel.ONE)
         students = []
         for grade in data:
             for student in data[grade]:
@@ -114,11 +114,11 @@ class Quiz:
         return quiz_grades_cf.get_count(key=self.name,
                                         column_start=score,
                                         column_finish=MAX_SCORE,
-                                        read_consistency_level=ConsistencyLevel.QUORUM)
+                                        read_consistency_level=ConsistencyLevel.ONE)
 
     def get_num_failed(self):
         data = quiz_questions_cf.get(key=self.name, columns=['num_failed'],
-                                     read_consistency_level=ConsistencyLevel.QUORUM)
+                                     read_consistency_level=ConsistencyLevel.ONE)
         return data['num_failed']
 
     def get_question_frequency(self):
@@ -126,7 +126,7 @@ class Quiz:
         We can't efficiently given a quiz and a question, return WHO answered it incorrectly.
         Returns a dict mapping question -> frequency answered incorrectly.
         """
-        data = quiz_questions_cf.get(key=self.name, read_consistency_level=ConsistencyLevel.QUORUM)
+        data = quiz_questions_cf.get(key=self.name, read_consistency_level=ConsistencyLevel.ONE)
         if 'num_failed' in data:
             del data['num_failed']
         return dict(data)

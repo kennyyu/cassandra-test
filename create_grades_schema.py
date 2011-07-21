@@ -7,7 +7,7 @@ from pycassa.system_manager import *
 from constants import GRADES_KEYSPACE as GRADES_KEYSPACE
 
 # total number of copies of all the data in this keyspace on different nodes. We only have one node.
-REPLICATION_FACTOR = 2
+REPLICATION_FACTOR = 1
 
 # connect to the local cluster, there are three nodes in the cluster:
 #          127.0.0.1
