@@ -40,9 +40,8 @@ for s in students:
     print "\tGrades: " + str(s.get_all_grades())
     for q in quizzes:
         print "\t\t" + str(q.name) + ": " + str(s.get_grade(q))
-        print "\t\t Questions wrong on " + str(q.name) + ": " + str(s.get_questions_wrong(q))
+        print "\t\t\tQuestions wrong on " + str(q.name) + ": " + str(s.get_questions_wrong(q))
 
-print '\n'
 print 'QUIZZES'
 for q in quizzes:
     print q.name
