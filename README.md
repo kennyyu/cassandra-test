@@ -7,9 +7,9 @@ There are three nodes in the local cluster and they are listening on IP addresse
 
 ##Questions/Discoveries about Cassandra
 
-*	###Connection Pools
+*	Connection Pools
 	*	    When we create the connection pool, we only need to add one server to the server_list parameter. Cassandra will use it's own internal communication to figure out the rest of the nodes in the cluster.
 
-*	###Eventual Consistency
+*	Eventual Consistency
 	*	    As stated [here](http://cassandra-user-incubator-apache-org.3065146.n2.nabble.com/meaning-of-eventual-consistency-in-Cassandra-td5885445.html), eventualy consistency depends on our choice of consistency level. If we read from multiple nodes, as in QUORUM or ALL, then the value with the most recent timestamp is returned.
 
