@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#!/usr/bin/env python
 
 # taken from http://www.datastax.com/docs/0.8/install/adding_nodes#adding-nodes
 # every time we add a new node to the cluster, we must reassign tokens to all
