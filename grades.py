@@ -14,10 +14,9 @@ from constants import STUDENT_GRADES_COLUMN_FAMILY as STUDENT_GRADES_COLUMN_FAMI
 from constants import QUIZ_QUESTIONS_COLUMN_FAMILY as QUIZ_QUESTIONS_COLUMN_FAMILY
 
 # open a pool of connections to the cluster
-pool = pycassa.ConnectionPool(keyspace=GRADES_KEYSPACE, server_list=['127.0.0.10:9160'])
-#                              server_list=['127.0.0.10:9160',
-#                                           '127.0.0.1:9160',
-#                                           '127.0.0.5:9160'])
+pool = pycassa.ConnectionPool(keyspace=GRADES_KEYSPACE, server_list=['127.0.0.10:9160',
+                                                                     '127.0.0.1:9160',
+                                                                     '127.0.0.5:9160'])
 
 # grab the column families
 quiz_grades_cf = pycassa.ColumnFamily(pool, QUIZ_GRADES_COLUMN_FAMILY)
@@ -108,6 +107,7 @@ class Quiz:
                 for student in data[grade]:
                     students.append(student)
             return students
+        # pycassa throws a NotFoundException if the key is not in the db
         except NotFoundException:
             return None
 
@@ -120,6 +120,7 @@ class Quiz:
                                             column_start=score,
                                             column_finish=MAX_SCORE,
                                             read_consistency_level=ConsistencyLevel.ONE)
+        # pycassa throws a NotFoundException if the key is not in the db
         except NotFoundException:
             return None
 
