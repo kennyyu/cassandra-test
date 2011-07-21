@@ -7,7 +7,7 @@ from pycassa.system_manager import *
 from constants import GRADES_KEYSPACE as GRADES_KEYSPACE
 
 # total number of copies of all the data in this keyspace on different nodes. We only have one node.
-REPLICATION_FACTOR = 1
+REPLICATION_FACTOR = 2
 
 # connect to the local cluster, there are three nodes in the cluster:
 #          127.0.0.1
@@ -98,7 +98,8 @@ if not QUIZ_QUESTIONS_COLUMN_FAMILY in sys.get_keyspace_column_families(GRADES_K
     sys.create_column_family(GRADES_KEYSPACE, QUIZ_QUESTIONS_COLUMN_FAMILY, 
                              key_validation_class='AsciiType',
                              comparator_type='AsciiType',
-                             default_validation_class='CounterColumnType')
+                             default_validation_class='CounterColumnType',
+                             replicate_on_write=True)
     sys.create_index(GRADES_KEYSPACE, QUIZ_QUESTIONS_COLUMN_FAMILY, 
                      column='num_failed', value_type='CounterColumnType')
 
