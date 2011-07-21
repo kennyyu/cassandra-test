@@ -6,6 +6,7 @@ of the variables in this file.
 
 import pycassa
 from pycassa.cassandra.ttypes import ConsistencyLevel
+from pycassa.cassandra.c08.ttypes import NotFoundException
 
 from constants import GRADES_KEYSPACE as GRADES_KEYSPACE
 from constants import QUIZ_GRADES_COLUMN_FAMILY as QUIZ_GRADES_COLUMN_FAMILY
@@ -55,7 +56,7 @@ class Student:
             
     def get_grade(self, quiz):
         data = student_grades_cf.get(self.name, super_column=quiz.name, columns=['grade'],
-                                     read_consistency_level=ConsistencyLevel.ANY)
+                                     read_consistency_level=ConsistencyLevel.ONE)
         return data['grade']
 
     def get_all_grades(self):
@@ -97,24 +98,30 @@ class Quiz:
         """
         Returns a list of students with grade >= score on this quiz
         """
-        data = quiz_grades_cf.get(key=self.name, 
-                                  column_start=score, 
-                                  column_finish=MAX_SCORE,
-                                  read_consistency_level=ConsistencyLevel.ONE)
-        students = []
-        for grade in data:
-            for student in data[grade]:
-                students.append(student)
-        return students
+        try:
+            data = quiz_grades_cf.get(key=self.name, 
+                                      column_start=score, 
+                                      column_finish=MAX_SCORE,
+                                      read_consistency_level=ConsistencyLevel.ONE)
+            students = []
+            for grade in data:
+                for student in data[grade]:
+                    students.append(student)
+            return students
+        except NotFoundException:
+            return None
 
     def get_num_students_with_grade_geq_than(self, score):
         """
         Returns number of students with grade >= score on this quiz
         """
-        return quiz_grades_cf.get_count(key=self.name,
-                                        column_start=score,
-                                        column_finish=MAX_SCORE,
-                                        read_consistency_level=ConsistencyLevel.ONE)
+        try:
+            return quiz_grades_cf.get_count(key=self.name,
+                                            column_start=score,
+                                            column_finish=MAX_SCORE,
+                                            read_consistency_level=ConsistencyLevel.ONE)
+        except NotFoundException:
+            return None
 
     def get_num_failed(self):
         data = quiz_questions_cf.get(key=self.name, columns=['num_failed'],
@@ -146,12 +153,3 @@ class Quiz:
             quizzes[quiz] = num_failed
         return quizzes
 
-s1 = Student('Kenny')
-s2 = Student('Jack')
-q1 = Quiz('q1')
-q2 = Quiz('q2')
-
-s1.add_quiz(q1, quiz_score=80, questions_wrong=['1','2a'])
-s1.add_quiz(q2, quiz_score=40, questions_wrong=['3','7','10b'])
-s2.add_quiz(q1, quiz_score=30, questions_wrong=['1','9'])
-s2.add_quiz(q2, quiz_score=20, questions_wrong=['3','7','9'])

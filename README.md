@@ -16,3 +16,6 @@ There are three nodes in the local cluster and they are listening on IP addresse
 	*	    As stated [here](http://cassandra-user-incubator-apache-org.3065146.n2.nabble.com/meaning-of-eventual-consistency-in-Cassandra-td5885445.html), eventualy consistency depends on our choice of consistency level. If we read from multiple nodes, as in QUORUM or ALL, then the value with the most recent timestamp is returned.
 	*	    Cassandra uses Read Repair--if whenever Cassandra reads from replicas of the same key and the most recent timestamped value is different from the other values, the newest version will be sent to all the out-of-date replicas.
 
+*	Querying
+	*	    If we query the database to get a key that is not in the column family, NotFoundException will be returned instead of None.
+
